@@ -13,7 +13,12 @@ type PaymentCancelOptions struct {
 	Currency             *string
 }
 
-type TransactionsOptions struct {
-	startingAfter *string
-	limit         *int
+type TransactionOptions struct {
+	StartingAfter *string
+	Limit         *int
+}
+
+type SettlementOptions struct {
+	Page int
+	Size int
 }

@@ -20,6 +20,22 @@ type Client struct {
 	encodedApiKey string
 }
 
+/*
+NewClient 토스페이먼츠 클라이언트 생성
+토스페이먼츠 API를 사용하기 위한 클라이언트를 생성합니다.
+API 키는 토스페이먼츠 개발자 센터에서 발급받을 수 있습니다.
+
+Parameters:
+  - apiKey: 토스페이먼츠에서 발급받은 API 키 (시크릿 키)
+
+Returns:
+  - *Client: 초기화된 토스페이먼츠 클라이언트 객체
+
+Example:
+
+	client := toss.NewClient("test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R")
+	payment, err := client.PaymentConfirm("paymentKey", "orderId", 15000)
+*/
 func NewClient(apiKey string) *Client {
 	return &Client{
 		apiKey:        apiKey,
@@ -106,6 +122,22 @@ func (c *Client) transactionsReq(method, urls string, body map[string]any) ([]Tr
 	}
 
 	return transactions, nil
+}
+
+func (c *Client) settlementsReq(method, urls string, body map[string]any) ([]Settlement, error) {
+	respBody, err := c.req(method, urls, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var settlements []Settlement
+
+	if err := json.Unmarshal(respBody, &settlements); err != nil {
+		return nil, err
+	}
+
+	return settlements, nil
 }
 
 /*
@@ -255,18 +287,59 @@ Example:
 	transactions, err := client.TransactionsCheck(startDate, endDate, nil)
 
 	// 페이징으로 100개씩 조회
-	options := &TransactionsOptions{
-	    limit: 100,
+	options := &TransactionOptions{
+	    Limit: 100,
 	}
 	transactions, err := client.TransactionsCheck(startDate, endDate, options)
 */
-func (c *Client) TransactionsCheck(startDate, endDate time.Time, o *TransactionsOptions) ([]Transaction, error) {
+func (c *Client) TransactionsCheck(startDate, endDate time.Time, o *TransactionOptions) ([]Transaction, error) {
 	body := map[string]any{}
 	if o != nil {
-		body["startingAfter"] = o.startingAfter
-		body["limit"] = o.limit
+		body["startingAfter"] = o.StartingAfter
+		body["limit"] = o.Limit
 	}
 	body["startDate"] = startDate.Format(time.RFC3339)
 	body["endDate"] = endDate.Format(time.RFC3339)
 	return c.transactionsReq("GET", "v1/transactions", body)
+}
+
+/*
+SettlementsCheck 정산 내역 조회
+지정한 날짜 정보로 정산 기록을 조회합니다.
+정산 관리, 매출 분석, 수수료 확인 등에 활용하세요.
+
+Parameters:
+  - startDate: 조회 시작 날짜 (정산 처리 시점 기준)
+  - endDate: 조회 종료 날짜 (정산 처리 시점 기준)
+  - o: 조회 옵션 (nil 가능)
+  - Page: 페이지 번호 (1부터 시작)
+  - Size: 페이지당 조회할 정산 수 (최대 100개, 기본값 20개)
+
+Returns:
+  - []Settlement: 정산 내역 배열
+  - error: 조회 실패 시 에러
+
+Example:
+
+	// 최근 30일 정산 내역 조회
+	startDate := time.Now().AddDate(0, 0, -30)
+	endDate := time.Now()
+	settlements, err := client.SettlementsCheck(startDate, endDate, nil)
+
+	// 페이징으로 50개씩 조회
+	options := &SettlementOptions{
+	    Page: 1,
+	    Size: 50,
+	}
+	settlements, err := client.SettlementsCheck(startDate, endDate, options)
+*/
+func (c *Client) SettlementsCheck(startDate, endDate time.Time, o *SettlementOptions) ([]Settlement, error) {
+	body := map[string]any{}
+	if o != nil {
+		body["page"] = o.Page
+		body["size"] = o.Size
+	}
+	body["startDate"] = startDate.Format(time.RFC3339)
+	body["endDate"] = endDate.Format(time.RFC3339)
+	return c.settlementsReq("GET", "v1/settlements", body)
 }
