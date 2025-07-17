@@ -5,11 +5,11 @@ import "time"
 type SettlementFeesType string
 
 const (
-	SettlementFeesTypeBase                = "BASE"
-	SettlementFeesTypeInstallment         = "INSTALLMENT"
-	SettlementFeesTypeInstallmentDiscount = "INSTALLMENT_DISCOUNT"
-	SettlementFeesTypePointSaving         = "POINT_SAVING"
-	SettlementFeesTypeEtc                 = "ETC"
+	SettlementFeesTypeBase                SettlementFeesType = "BASE"
+	SettlementFeesTypeInstallment         SettlementFeesType = "INSTALLMENT"
+	SettlementFeesTypeInstallmentDiscount SettlementFeesType = "INSTALLMENT_DISCOUNT"
+	SettlementFeesTypePointSaving         SettlementFeesType = "POINT_SAVING"
+	SettlementFeesTypeEtc                 SettlementFeesType = "ETC"
 )
 
 type SettlementFee struct {
