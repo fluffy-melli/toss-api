@@ -12,30 +12,30 @@ const (
 	PaymentTypeBrandpay PaymentType = "BRANDPAY"
 )
 
-type PaymentMethod string
+type Method string
 
 const (
-	PaymentMethodCard           PaymentMethod = "카드"
-	PaymentMethodVirtualAccount PaymentMethod = "가상계좌"
-	PaymentMethodEasyPay        PaymentMethod = "간편결제"
-	PaymentMethodMobilePhone    PaymentMethod = "핸드폰"
-	PaymentMethodTransfer       PaymentMethod = "계좌이체"
-	PaymentMethodCulture        PaymentMethod = "문화상품권"
-	PaymentMethodBookCulture    PaymentMethod = "도서문화상품권"
-	PaymentMethodGameCulture    PaymentMethod = "게임문화상품권"
+	MethodCard           Method = "카드"
+	MethodVirtualAccount Method = "가상계좌"
+	MethodEasyPay        Method = "간편결제"
+	MethodMobilePhone    Method = "핸드폰"
+	MethodTransfer       Method = "계좌이체"
+	MethodCulture        Method = "문화상품권"
+	MethodBookCulture    Method = "도서문화상품권"
+	MethodGameCulture    Method = "게임문화상품권"
 )
 
-type PaymentStatus string
+type Status string
 
 const (
-	PaymentStatusReady             PaymentStatus = "READY"
-	PaymentStatusInProgress        PaymentStatus = "IN_PROGRESS"
-	PaymentStatusWaitingForDeposit PaymentStatus = "WAITING_FOR_DEPOSIT"
-	PaymentStatusDone              PaymentStatus = "DONE"
-	PaymentStatusCanceled          PaymentStatus = "CANCELED"
-	PaymentStatusPartialCanceled   PaymentStatus = "PARTIAL_CANCELED"
-	PaymentStatusAborted           PaymentStatus = "ABORTED"
-	PaymentStatusExpired           PaymentStatus = "EXPIRED"
+	StatusReady             Status = "READY"
+	StatusInProgress        Status = "IN_PROGRESS"
+	StatusWaitingForDeposit Status = "WAITING_FOR_DEPOSIT"
+	StatusDone              Status = "DONE"
+	StatusCanceled          Status = "CANCELED"
+	StatusPartialCanceled   Status = "PARTIAL_CANCELED"
+	StatusAborted           Status = "ABORTED"
+	StatusExpired           Status = "EXPIRED"
 )
 
 type PaymentCancels struct {
@@ -214,10 +214,10 @@ type Payment struct {
 	OrderName           string                  `json:"orderName"`
 	MID                 string                  `json:"mId"`
 	Currency            string                  `json:"currency"`
-	Method              PaymentMethod           `json:"method,omitempty"`
+	Method              Method                  `json:"method,omitempty"`
 	TotalAmount         int                     `json:"totalAmount"`
 	BalanceAmount       int                     `json:"balanceAmount"`
-	Status              PaymentStatus           `json:"status"`
+	Status              Status                  `json:"status"`
 	RequestedAt         time.Time               `json:"requestedAt"`
 	ApprovedAt          *time.Time              `json:"approvedAt,omitempty"`
 	UseEscrow           bool                    `json:"useEscrow"`

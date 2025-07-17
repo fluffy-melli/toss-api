@@ -12,3 +12,8 @@ type PaymentCancelOptions struct {
 	TaxFreeAmount        *int
 	Currency             *string
 }
+
+type TransactionsOptions struct {
+	startingAfter *string
+	limit         *int
+}

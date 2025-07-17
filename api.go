@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"time"
 )
 
 const (
@@ -25,13 +27,19 @@ func NewClient(apiKey string) *Client {
 	}
 }
 
-func (c *Client) paymentReq(method, url string, body map[string]any) (*Payment, error) {
+func (c *Client) req(method, urls string, body map[string]any) ([]byte, error) {
 	var req *http.Request
 	var err error
 
-	fullURL := API + url
+	fullURL := API + urls
 
 	if method == "GET" || body == nil {
+		params := url.Values{}
+		for k, v := range body {
+			params.Set(k, fmt.Sprintf("%v", v))
+		}
+		fullURL += "?" + params.Encode()
+		fmt.Println(fullURL)
 		req, err = http.NewRequest(method, fullURL, nil)
 	} else {
 		jsonData, err := json.Marshal(body)
@@ -65,12 +73,39 @@ func (c *Client) paymentReq(method, url string, body map[string]any) (*Payment, 
 		return nil, fmt.Errorf("[%d] Toss API error: %s", resp.StatusCode, string(respBody))
 	}
 
+	return respBody, nil
+}
+
+func (c *Client) paymentReq(method, urls string, body map[string]any) (*Payment, error) {
+	respBody, err := c.req(method, urls, body)
+
+	if err != nil {
+		return nil, err
+	}
+
 	var payment Payment
+
 	if err := json.Unmarshal(respBody, &payment); err != nil {
 		return nil, err
 	}
 
 	return &payment, nil
+}
+
+func (c *Client) transactionsReq(method, urls string, body map[string]any) ([]Transaction, error) {
+	respBody, err := c.req(method, urls, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []Transaction
+
+	if err := json.Unmarshal(respBody, &transactions); err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
 }
 
 func (c *Client) PaymentConfirm(paymentKey, orderId string, amount int) (*Payment, error) {
@@ -103,4 +138,15 @@ func (c *Client) PaymentCheckByOrderID(orderId string) (*Payment, error) {
 
 func (c *Client) PaymentCheckByPaymentKey(paymentKey string) (*Payment, error) {
 	return c.paymentReq("GET", fmt.Sprintf("v1/payments/%s", paymentKey), nil)
+}
+
+func (c *Client) TransactionsCheck(startDate, endDate time.Time, o *TransactionsOptions) ([]Transaction, error) {
+	body := map[string]any{}
+	if o != nil {
+		body["startingAfter"] = o.startingAfter
+		body["limit"] = o.limit
+	}
+	body["startDate"] = startDate.Format(time.RFC3339)
+	body["endDate"] = endDate.Format(time.RFC3339)
+	return c.transactionsReq("GET", "v1/transactions", body)
 }
