@@ -2,43 +2,13 @@ package toss
 
 import (
 	"time"
+
+	"github.com/fluffy-melli/toss-api/bankcode"
+	"github.com/fluffy-melli/toss-api/status"
+	"github.com/fluffy-melli/toss-api/types"
 )
 
-type PaymentType string
-
-const (
-	PaymentTypeNormal   PaymentType = "NORMAL"
-	PaymentTypeBilling  PaymentType = "BILLING"
-	PaymentTypeBrandpay PaymentType = "BRANDPAY"
-)
-
-type Method string
-
-const (
-	MethodCard           Method = "카드"
-	MethodVirtualAccount Method = "가상계좌"
-	MethodEasyPay        Method = "간편결제"
-	MethodMobilePhone    Method = "핸드폰"
-	MethodTransfer       Method = "계좌이체"
-	MethodCulture        Method = "문화상품권"
-	MethodBookCulture    Method = "도서문화상품권"
-	MethodGameCulture    Method = "게임문화상품권"
-)
-
-type Status string
-
-const (
-	StatusReady             Status = "READY"
-	StatusInProgress        Status = "IN_PROGRESS"
-	StatusWaitingForDeposit Status = "WAITING_FOR_DEPOSIT"
-	StatusDone              Status = "DONE"
-	StatusCanceled          Status = "CANCELED"
-	StatusPartialCanceled   Status = "PARTIAL_CANCELED"
-	StatusAborted           Status = "ABORTED"
-	StatusExpired           Status = "EXPIRED"
-)
-
-type PaymentCancels struct {
+type PaymentCancel struct {
 	CancelAmount           int       `json:"cancelAmount"`
 	CancelReason           string    `json:"cancelReason"`
 	TaxFreeAmount          int       `json:"taxFreeAmount"`
@@ -53,118 +23,59 @@ type PaymentCancels struct {
 	CancelRequestId        string    `json:"cancelRequestId"`
 }
 
-type PaymentCardType string
-
-const (
-	PaymentCardTypeCredit  PaymentCardType = "신용"
-	PaymentCardTypeDebit   PaymentCardType = "체크"
-	PaymentCardTypeGift    PaymentCardType = "기프트"
-	PaymentCardTypeUnknown PaymentCardType = "미확인"
-)
-
-type PaymentOwnerType string
-
-const (
-	PaymentOwnerTypePersonal  PaymentOwnerType = "개인"
-	PaymentOwnerTypeCorporate PaymentOwnerType = "법인"
-	PaymentOwnerTypeUnknown   PaymentOwnerType = "미확인"
-)
-
-type PaymentAcquireStatus string
-
-const (
-	PaymentAcquireStatusReady           PaymentAcquireStatus = "READY"
-	PaymentAcquireStatusRequested       PaymentAcquireStatus = "REQUESTED"
-	PaymentAcquireStatusCompleted       PaymentAcquireStatus = "COMPLETED"
-	PaymentAcquireStatusCancelRequested PaymentAcquireStatus = "CANCEL_REQUESTED"
-	PaymentAcquireStatusCanceled        PaymentAcquireStatus = "CANCELED"
-)
-
-type PaymentInterestPayer string
-
-const (
-	PaymentInterestPayerBuyer       PaymentInterestPayer = "BUYER"
-	PaymentInterestPayerCardCompany PaymentInterestPayer = "CARD_COMPANY"
-	PaymentInterestPayerMerchant    PaymentInterestPayer = "MERCHANT"
-)
-
 type PaymentCard struct {
-	Amount                int                  `json:"amount"`
-	IssuerCode            string               `json:"issuerCode"`
-	AcquirerCode          string               `json:"acquirerCode,omitempty"`
-	Number                string               `json:"number"`
-	InstallmentPlanMonths int                  `json:"installmentPlanMonths"`
-	ApproveNo             string               `json:"approveNo"`
-	UseCardPoint          bool                 `json:"useCardPoint"`
-	CardType              PaymentCardType      `json:"cardType"`
-	OwnerType             PaymentOwnerType     `json:"ownerType"`
-	AcquireStatus         PaymentAcquireStatus `json:"acquireStatus"`
-	IsInterestFree        bool                 `json:"isInterestFree"`
-	InterestPayer         PaymentInterestPayer `json:"interestPayer,omitempty"`
+	Amount                int                 `json:"amount"`
+	IssuerCode            bankcode.Card       `json:"issuerCode"`
+	AcquirerCode          bankcode.Card       `json:"acquirerCode,omitempty"`
+	Number                string              `json:"number"`
+	InstallmentPlanMonths int                 `json:"installmentPlanMonths"`
+	ApproveNo             string              `json:"approveNo"`
+	UseCardPoint          bool                `json:"useCardPoint"`
+	CardType              types.Card          `json:"cardType"`
+	OwnerType             types.Owner         `json:"ownerType"`
+	AcquireStatus         status.Acquire      `json:"acquireStatus"`
+	IsInterestFree        bool                `json:"isInterestFree"`
+	InterestPayer         types.InterestPayer `json:"interestPayer,omitempty"`
 }
 
-type PaymentAccountType string
-
-const (
-	PaymentAccountTypeGeneral PaymentAccountType = "일반"
-	PaymentAccountTypeFixed   PaymentAccountType = "고정"
-)
-
-type PaymentRefundStatus string
-
-const (
-	PaymentRefundStatusNone          PaymentRefundStatus = "NONE"
-	PaymentRefundStatusPending       PaymentRefundStatus = "PENDING"
-	PaymentRefundStatusFailed        PaymentRefundStatus = "FAILED"
-	PaymentRefundStatusPartialFailed PaymentRefundStatus = "PARTIAL_FAILED"
-	PaymentRefundStatusCompleted     PaymentRefundStatus = "COMPLETED"
-)
-
-type PaymentSettlementStatus string
-
-const (
-	PaymentSettlementStatusIncompleted PaymentSettlementStatus = "INCOMPLETED"
-	PaymentSettlementStatusCompleted   PaymentSettlementStatus = "COMPLETED"
-)
-
 type PaymentRefundReceiveAccount struct {
-	BankCode      string `json:"bankCode"`
-	AccountNumber string `json:"accountNumber"`
-	HolderName    string `json:"holderName"`
+	BankCode      bankcode.Card `json:"bankCode"`
+	AccountNumber string        `json:"accountNumber"`
+	HolderName    string        `json:"holderName"`
 }
 
 type PaymentVirtualAccount struct {
-	AccountType          PaymentAccountType          `json:"accountType"`
+	AccountType          types.Account               `json:"accountType"`
 	AccountNumber        string                      `json:"accountNumber"`
-	BankCode             string                      `json:"bankCode"`
+	BankCode             bankcode.Card               `json:"bankCode"`
 	CustomerName         string                      `json:"customerName"`
 	DueDate              time.Time                   `json:"dueDate"`
-	RefundStatus         PaymentRefundStatus         `json:"refundStatus"`
+	RefundStatus         status.Refund               `json:"refundStatus"`
 	Expired              bool                        `json:"expired"`
-	SettlementStatus     PaymentSettlementStatus     `json:"settlementStatus"`
+	SettlementStatus     status.Settlement           `json:"settlementStatus"`
 	RefundReceiveAccount PaymentRefundReceiveAccount `json:"refundReceiveAccount,omitempty"`
 }
 
 type PaymentMobilePhone struct {
-	CustomerMobilePhone string                  `json:"customerMobilePhone"`
-	SettlementStatus    PaymentSettlementStatus `json:"settlementStatus"`
-	ReceiptUrl          string                  `json:"receiptUrl"`
+	CustomerMobilePhone string            `json:"customerMobilePhone"`
+	SettlementStatus    status.Settlement `json:"settlementStatus"`
+	ReceiptUrl          string            `json:"receiptUrl"`
 }
 
 type PaymentGiftCertificate struct {
-	ApproveNo        string                  `json:"approveNo"`
-	SettlementStatus PaymentSettlementStatus `json:"settlementStatus"`
+	ApproveNo        string            `json:"approveNo"`
+	SettlementStatus status.Settlement `json:"settlementStatus"`
 }
 
 type PaymentTransfer struct {
-	BankCode         string                  `json:"bankCode"`
-	SettlementStatus PaymentSettlementStatus `json:"settlementStatus"`
+	BankCode         bankcode.Card     `json:"bankCode"`
+	SettlementStatus status.Settlement `json:"settlementStatus"`
 }
 
 type PaymentEasyPay struct {
-	Provider       string `json:"provider"`
-	Amount         int    `json:"amount"`
-	DiscountAmount int    `json:"discountAmount"`
+	Provider       bankcode.EasyPay `json:"provider"`
+	Amount         int              `json:"amount"`
+	DiscountAmount int              `json:"discountAmount"`
 }
 
 type PaymentURL struct {
@@ -209,15 +120,15 @@ type PaymentDiscount struct {
 type Payment struct {
 	Version             string                  `json:"version"`
 	PaymentKey          string                  `json:"paymentKey"`
-	Type                PaymentType             `json:"type"`
+	Type                types.Payment           `json:"type"`
 	OrderId             string                  `json:"orderId"`
 	OrderName           string                  `json:"orderName"`
 	MID                 string                  `json:"mId"`
 	Currency            string                  `json:"currency"`
-	Method              Method                  `json:"method,omitempty"`
+	Method              types.Method            `json:"method,omitempty"`
 	TotalAmount         int                     `json:"totalAmount"`
 	BalanceAmount       int                     `json:"balanceAmount"`
-	Status              Status                  `json:"status"`
+	Status              status.Payment          `json:"status"`
 	RequestedAt         time.Time               `json:"requestedAt"`
 	ApprovedAt          *time.Time              `json:"approvedAt,omitempty"`
 	UseEscrow           bool                    `json:"useEscrow"`
@@ -227,7 +138,7 @@ type Payment struct {
 	CultureExpense      bool                    `json:"cultureExpense"`
 	TaxFreeAmount       int                     `json:"taxFreeAmount"`
 	TaxExemptionAmount  int                     `json:"taxExemptionAmount"`
-	Cancels             []PaymentCancels        `json:"cancels,omitempty"`
+	Cancels             []PaymentCancel         `json:"cancels,omitempty"`
 	IsPartialCancelable bool                    `json:"isPartialCancelable"`
 	Card                *PaymentCard            `json:"card,omitempty"`
 	VirtualAccount      *PaymentVirtualAccount  `json:"virtualAccount,omitempty"`
@@ -235,7 +146,7 @@ type Payment struct {
 	MobilePhone         *PaymentMobilePhone     `json:"mobilePhone,omitempty"`
 	GiftCertificate     *PaymentGiftCertificate `json:"giftCertificate,omitempty"`
 	Transfer            *PaymentTransfer        `json:"transfer,omitempty"`
-	Metadata            map[string]interface{}  `json:"metadata,omitempty"`
+	Metadata            map[string]any          `json:"metadata,omitempty"`
 	Receipt             *PaymentURL             `json:"receipt,omitempty"`
 	Checkout            *PaymentURL             `json:"checkout,omitempty"`
 	EasyPay             *PaymentEasyPay         `json:"easyPay,omitempty"`

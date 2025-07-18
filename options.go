@@ -1,7 +1,9 @@
 package toss
 
+import "github.com/fluffy-melli/toss-api/bankcode"
+
 type PaymentCancelOptionsRefundReceiveAccount struct {
-	Bank          string
+	Bank          bankcode.Card
 	AccountNumber string
 	HolderName    string
 }

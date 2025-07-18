@@ -1,20 +1,14 @@
 package toss
 
-import "time"
+import (
+	"time"
 
-type SettlementFeesType string
-
-const (
-	SettlementFeesTypeBase                SettlementFeesType = "BASE"
-	SettlementFeesTypeInstallment         SettlementFeesType = "INSTALLMENT"
-	SettlementFeesTypeInstallmentDiscount SettlementFeesType = "INSTALLMENT_DISCOUNT"
-	SettlementFeesTypePointSaving         SettlementFeesType = "POINT_SAVING"
-	SettlementFeesTypeEtc                 SettlementFeesType = "ETC"
+	"github.com/fluffy-melli/toss-api/types"
 )
 
 type SettlementFee struct {
-	Type SettlementFeesType `json:"type"`
-	Fee  int                `json:"fee"`
+	Type types.Fees `json:"type"`
+	Fee  int        `json:"fee"`
 }
 
 type Settlement struct {
@@ -23,7 +17,7 @@ type Settlement struct {
 	TransactionKey  string                  `json:"transactionKey"`
 	OrderId         string                  `json:"orderId"`
 	Currency        string                  `json:"currency"`
-	Method          Method                  `json:"method"`
+	Method          types.Method            `json:"method"`
 	Amount          int                     `json:"amount"`
 	InterestFee     int                     `json:"interestFee"`
 	Fees            []SettlementFee         `json:"fees"`
@@ -39,5 +33,5 @@ type Settlement struct {
 	MobilePhone     *PaymentMobilePhone     `json:"mobilePhone,omitempty"`
 	Transfer        *PaymentTransfer        `json:"transfer,omitempty"`
 	VirtualAccount  *PaymentVirtualAccount  `json:"virtualAccount,omitempty"`
-	Cancels         []PaymentCancels        `json:"cancels,omitempty"`
+	Cancels         []PaymentCancel         `json:"cancels,omitempty"`
 }
