@@ -4,6 +4,7 @@ type Card string
 
 const (
 	// 국내 카드사 코드
+
 	IBK_BC      Card = "3K" // 기업 BC
 	GWANGJUBANK Card = "46" // 광주은행
 	LOTTE       Card = "71" // 롯데카드
@@ -30,6 +31,7 @@ const (
 	SUHYEOP     Card = "34" // Sh수협은행
 
 	// 해외 카드사 코드
+
 	DINERS   Card = "6D" // 다이너스 클럽
 	MASTER   Card = "4M" // 마스터카드
 	UNIONPAY Card = "3C" // 유니온페이
@@ -38,6 +40,7 @@ const (
 	VISA     Card = "4V" // VISA
 
 	// 은행 & 증권사 코드
+
 	KYONGNAMBANK                     Card = "039" // 경남은행
 	GWANGJUBANK_BANK                 Card = "034" // 광주은행
 	KYOBO_SECURITIES                 Card = "261" // 교보증권
@@ -91,3 +94,179 @@ const (
 	SUHYEOP_BANK                     Card = "007" // Sh수협은행
 	SK_SECURITIES                    Card = "266" // SK증권
 )
+
+func (c Card) String() string {
+	switch c {
+	// 국내 카드사 코드
+	case IBK_BC:
+		return "기업 BC"
+	case GWANGJUBANK:
+		return "광주은행"
+	case LOTTE:
+		return "롯데카드"
+	case KDBBANK:
+		return "KDB산업은행"
+	case BC:
+		return "BC카드"
+	case SAMSUNG:
+		return "삼성카드"
+	case SAEMAUL:
+		return "새마을금고"
+	case SHINHAN:
+		return "신한카드"
+	case SHINHYEOP:
+		return "신협"
+	case CITI:
+		return "씨티카드"
+	case WOORI_BC:
+		return "우리BC카드"
+	case WOORI:
+		return "우리카드"
+	case POST:
+		return "우체국예금보험"
+	case SAVINGBANK:
+		return "저축은행중앙회"
+	case JEONBUKBANK:
+		return "전북은행"
+	case JEJUBANK:
+		return "제주은행"
+	case KAKAOBANK:
+		return "카카오뱅크"
+	case KBANK:
+		return "케이뱅크"
+	case TOSSBANK:
+		return "토스뱅크"
+	case HANA:
+		return "하나카드"
+	case HYUNDAI:
+		return "현대카드"
+	case KOOKMIN:
+		return "KB국민카드"
+	case NONGHYEOP:
+		return "NH농협카드"
+	case SUHYEOP:
+		return "Sh수협은행"
+
+	// 해외 카드사 코드
+	case DINERS:
+		return "다이너스 클럽"
+	case MASTER:
+		return "마스터카드"
+	case UNIONPAY:
+		return "유니온페이"
+	case AMEX:
+		return "아메리칸 익스프레스"
+	case JCB:
+		return "JCB"
+	case VISA:
+		return "VISA"
+
+	// 은행 & 증권사 코드
+	case KYONGNAMBANK:
+		return "경남은행"
+	case GWANGJUBANK_BANK:
+		return "광주은행"
+	case KYOBO_SECURITIES:
+		return "교보증권"
+	case LOCALNONGHYEOP:
+		return "단위농협"
+	case DAISHIN_SECURITIES:
+		return "대신증권"
+	case MERITZ_SECURITIES:
+		return "메리츠증권"
+	case MIRAE_ASSET_SECURITIES:
+		return "미래에셋증권"
+	case BOOKOOK_SECURITIES:
+		return "부국증권"
+	case BUSANBANK:
+		return "부산은행"
+	case SAMSUNG_SECURITIES:
+		return "삼성증권"
+	case SAEMAUL_BANK:
+		return "새마을금고"
+	case SANLIM:
+		return "산림조합"
+	case SHINYOUNG_SECURITIES:
+		return "신영증권"
+	case SHINHAN_INVESTMENT:
+		return "신한금융투자"
+	case SHINHAN_BANK:
+		return "신한은행"
+	case SHINHYEOP_BANK:
+		return "신협"
+	case CITI_BANK:
+		return "씨티은행"
+	case WOORI_BANK:
+		return "우리은행"
+	case POST_BANK:
+		return "우체국예금보험"
+	case YUANTA_SECURITES:
+		return "유안타증권"
+	case EUGENE_INVESTMENT_AND_SECURITIES:
+		return "유진투자증권"
+	case SAVINGBANK_BANK:
+		return "저축은행중앙회"
+	case JEONBUKBANK_BANK:
+		return "전북은행"
+	case JEJUBANK_BANK:
+		return "제주은행"
+	case KAKAOBANK_BANK:
+		return "카카오뱅크"
+	case KAKAOPAY_SECURITIES:
+		return "카카오페이증권"
+	case KBANK_BANK:
+		return "케이뱅크"
+	case KIWOOM:
+		return "키움증권"
+	case TOSS_MONEY:
+		return "토스머니"
+	case TOSSBANK_BANK:
+		return "토스뱅크"
+	case TOSS_SECURITIES:
+		return "토스증권"
+	case KOREA_FOSS_SECURITIES:
+		return "한국포스증권"
+	case HANA_INVESTMENT_AND_SECURITIES:
+		return "하나금융투자"
+	case HANA_BANK:
+		return "하나은행"
+	case HI_INVESTMENT_AND_SECURITIES:
+		return "하이투자증권"
+	case KOREA_INVESTMENT_AND_SECURITIES:
+		return "한국투자증권"
+	case HANHWA_INVESTMENT_AND_SECURITIES:
+		return "한화투자증권"
+	case HYUNDAI_MOTOR_SECURITIES:
+		return "현대차증권"
+	case HSBC:
+		return "홍콩상하이은행"
+	case DB_INVESTMENT_AND_SECURITIES:
+		return "DB금융투자"
+	case DAEGUBANK:
+		return "DGB대구은행"
+	case IBK:
+		return "IBK기업은행"
+	case KOOKMIN_BANK:
+		return "KB국민은행"
+	case KB_SECURITIES:
+		return "KB증권"
+	case KDBBANK_BANK:
+		return "KDB산업은행"
+	case DAOL_INVESTMENT_AND_SECURITIES:
+		return "KTB투자증권"
+	case LIG_INVESTMENT_AND_SECURITIES:
+		return "LIG투자증권"
+	case NONGHYEOP_BANK:
+		return "NH농협은행"
+	case NH_INVESTMENT_AND_SECURITIES:
+		return "NH투자증권"
+	case SC:
+		return "SC제일은행"
+	case SUHYEOP_BANK:
+		return "Sh수협은행"
+	case SK_SECURITIES:
+		return "SK증권"
+	default:
+		return "알 수 없는 금융기관"
+	}
+}
