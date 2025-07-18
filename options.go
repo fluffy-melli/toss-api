@@ -19,6 +19,13 @@ type TransactionOptions struct {
 }
 
 type SettlementOptions struct {
-	Page int
-	Size int
+	Page *int
+	Size *int
+}
+
+type BillingOptions struct {
+	CustomerEmail      *string
+	CustomerName       *string
+	TaxFreeAmount      *int
+	TaxExemptionAmount *int
 }

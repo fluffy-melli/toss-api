@@ -140,6 +140,22 @@ func (c *Client) settlementsReq(method, urls string, body map[string]any) ([]Set
 	return settlements, nil
 }
 
+func (c *Client) billingReq(method, urls string, body map[string]any) (*Billing, error) {
+	respBody, err := c.req(method, urls, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var billing Billing
+
+	if err := json.Unmarshal(respBody, &billing); err != nil {
+		return nil, err
+	}
+
+	return &billing, nil
+}
+
 /*
 PaymentConfirm 결제 승인
 토스페이먼츠 결제 위젯에서 결제 인증 완료 후 반드시 호출해야 하는 API입니다.
@@ -342,4 +358,81 @@ func (c *Client) SettlementsCheck(startDate, endDate time.Time, o *SettlementOpt
 	body["startDate"] = startDate.Format(time.RFC3339)
 	body["endDate"] = endDate.Format(time.RFC3339)
 	return c.settlementsReq("GET", "v1/settlements", body)
+}
+
+/*
+BillingIssue 빌링키 발급
+고객의 결제 수단을 등록하고 빌링키를 발급합니다.
+자동결제(정기결제) 서비스에 활용하세요.
+
+Parameters:
+  - authKey: 결제 수단 인증 키
+  - customerKey: 고객 식별 키
+
+Returns:
+  - *Billing: 빌링키 정보
+  - error: 발급 실패 시 에러
+
+Example:
+
+	// 빌링키 발급
+	billing, err := client.BillingIssue("auth_key_123", "customer_001")
+	if err != nil {
+	    log.Fatal(err)
+	}
+	fmt.Printf("빌링키: %s\n", billing.BillingKey)
+*/
+func (c *Client) BillingIssue(authKey, customerKey string) (*Billing, error) {
+	return c.billingReq("POST", "v1/billing/authorizations/issue", map[string]any{
+		"authKey":     authKey,
+		"customerKey": customerKey,
+	})
+}
+
+/*
+BillingConfirm 빌링키 결제 승인
+발급된 빌링키를 사용하여 결제를 승인합니다.
+자동결제(정기결제) 처리에 활용하세요.
+
+Parameters:
+  - billingKey: 빌링키
+  - customerKey: 고객 식별 키
+  - orderId: 주문 ID
+  - orderName: 주문명
+  - amount: 결제 금액
+  - o: 결제 옵션 (nil 가능)
+  - CustomerEmail: 고객 이메일
+  - CustomerName: 고객 이름
+  - TaxFreeAmount: 비과세 금액
+  - TaxExemptionAmount: 과세 면제 금액
+
+Returns:
+  - *Payment: 결제 정보
+  - error: 결제 실패 시 에러
+
+Example:
+
+	// 기본 빌링키 결제
+	payment, err := client.BillingConfirm("billing_key_123", "customer_001", "order_456", "정기결제", 10000, nil)
+	// 옵션 포함 빌링키 결제
+	options := &BillingOptions{
+	    CustomerEmail: "customer@example.com",
+	    CustomerName: "홍길동",
+	    TaxFreeAmount: 1000,
+	}
+	payment, err := client.BillingConfirm("billing_key_123", "customer_001", "order_456", "정기결제", 10000, options)
+*/
+func (c *Client) BillingConfirm(billingKey, customerKey, orderId, orderName string, amount int, o *BillingOptions) (*Payment, error) {
+	body := map[string]any{}
+	if o != nil {
+		body["customerEmail"] = o.CustomerEmail
+		body["customerName"] = o.CustomerName
+		body["taxFreeAmount"] = o.TaxFreeAmount
+		body["taxExemptionAmount"] = o.TaxExemptionAmount
+	}
+	body["customerKey"] = customerKey
+	body["orderId"] = orderId
+	body["orderName"] = orderName
+	body["amount"] = amount
+	return c.paymentReq("POST", fmt.Sprintf("v1/billing/%s", billingKey), body)
 }
