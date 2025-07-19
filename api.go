@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/fluffy-melli/toss-api/bankcode"
 )
 
 const (
@@ -435,4 +437,39 @@ func (c *Client) BillingConfirm(billingKey, customerKey, orderId, orderName stri
 	body["orderName"] = orderName
 	body["amount"] = amount
 	return c.paymentReq("POST", fmt.Sprintf("v1/billing/%s", billingKey), body)
+}
+
+func (c *Client) VirtualAccountsIssue(bank bankcode.Bank, customerName, orderId, orderName string, amount int, e []VirtualAccountsEscrowProducts, o *VirtualAccountsOptions) (*Payment, error) {
+	body := map[string]any{}
+	if o != nil {
+		body["validHours"] = o.ValidHours
+		if o.DueDate != nil {
+			body["dueDate"] = o.DueDate.Format(time.RFC3339)
+		}
+		body["customerEmail"] = o.CustomerEmail
+		body["customerMobilePhone"] = o.CustomerMobilePhone
+		body["taxFreeAmount"] = o.TaxFreeAmount
+		body["useEscrow"] = o.UseEscrow
+		body["cashReceipt"] = map[string]any{
+			"type":               o.CashReceipt.Type,
+			"registrationNumber": o.CashReceipt.RegistrationNumber,
+		}
+	}
+	var escrowProducts []map[string]any
+	for _, esc := range e {
+		escrowProducts = append(escrowProducts, map[string]any{
+			"id":        esc.ID,
+			"name":      esc.Name,
+			"code":      esc.Code,
+			"unitPrice": esc.UnitPrice,
+			"quantity":  esc.Quantity,
+		})
+	}
+	body["escrowProducts"] = escrowProducts
+	body["amount"] = amount
+	body["orderId"] = orderId
+	body["orderName"] = orderName
+	body["customerName"] = customerName
+	body["bank"] = bank
+	return c.paymentReq("POST", "v1/virtual-accounts", body)
 }

@@ -1,11 +1,16 @@
 package toss
 
-import "github.com/fluffy-melli/toss-api/bankcode"
+import (
+	"time"
+
+	"github.com/fluffy-melli/toss-api/bankcode"
+	"github.com/fluffy-melli/toss-api/types"
+)
 
 type PaymentCancelOptionsRefundReceiveAccount struct {
-	Bank          bankcode.Card
-	AccountNumber string
-	HolderName    string
+	Bank          *bankcode.Card
+	AccountNumber *string
+	HolderName    *string
 }
 
 type PaymentCancelOptions struct {
@@ -30,4 +35,27 @@ type BillingOptions struct {
 	CustomerName       *string
 	TaxFreeAmount      *int
 	TaxExemptionAmount *int
+}
+
+type VirtualAccountsOptionsCashReceipt struct {
+	Type               *types.CashReceipt
+	RegistrationNumber *string
+}
+
+type VirtualAccountsEscrowProducts struct {
+	ID        string
+	Name      string
+	Code      string
+	UnitPrice int
+	Quantity  int
+}
+
+type VirtualAccountsOptions struct {
+	ValidHours          *int
+	DueDate             *time.Time
+	CustomerEmail       *string
+	CustomerMobilePhone *string
+	TaxFreeAmount       *int
+	UseEscrow           *bool
+	CashReceipt         *VirtualAccountsOptionsCashReceipt
 }
